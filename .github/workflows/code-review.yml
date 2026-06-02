@@ -1,0 +1,50 @@
+name: Code Review
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          model: opencode/big-pickle
+          use_github_token: true
+          prompt: |
+            Review the code changes in this push commit.
+
+            Create a GitHub issue titled "Code Review: <describe what changed>" with the following sections:
+
+            ## Overall Rating: **X/10**
+
+            ### Code Quality
+            - Assess readability, maintainability, structure, and adherence to convention.
+            - Note anything well-structured or following best practices.
+
+            ### Bugs & Risks
+            - Identify any potential bugs, edge cases, or runtime errors.
+            - Flag unsafe patterns or logic issues.
+
+            ### Security
+            - Check for exposed secrets, injection risks, or other vulnerabilities.
+
+            ### Performance
+            - Spot any obvious inefficiencies, N+1 queries, or unnecessary work.
+
+            ### Suggestions
+            - Concrete, actionable improvements the author could make.
+
+            Be fair and constructive. Include specific file/line references where relevant.
