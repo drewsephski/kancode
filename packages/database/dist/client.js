@@ -1,0 +1,21 @@
+import { createClient } from "@supabase/supabase-js";
+let client = null;
+export function getSupabaseClient() {
+    if (client)
+        return client;
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+        throw new Error("Supabase client not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.");
+    }
+    client = createClient(url, key, {
+        auth: { persistSession: false },
+    });
+    return client;
+}
+export function createSupabaseClient(url, key) {
+    return createClient(url, key, {
+        auth: { persistSession: false },
+    });
+}
+//# sourceMappingURL=client.js.map

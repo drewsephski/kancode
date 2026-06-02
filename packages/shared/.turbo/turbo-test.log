@@ -1,0 +1,4 @@
+
+> @kancode/shared@ test /Users/drewsepeczi/kan/packages/shared
+> node --eval "process.exit(0)"
+

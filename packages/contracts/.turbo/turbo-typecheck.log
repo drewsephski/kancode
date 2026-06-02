@@ -1,0 +1,4 @@
+
+> @kancode/contracts@ typecheck /Users/drewsepeczi/kan/packages/contracts
+> tsc -p tsconfig.json --noEmit
+

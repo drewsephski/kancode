@@ -1,0 +1,23 @@
+{
+  "name": "@kancode/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build --webpack",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint app components/index.ts features/index.ts server/index.ts lib/index.ts lib/utils.ts",
+    "test": "node --eval \"process.exit(0)\"",
+    "dev": "next dev"
+  },
+  "dependencies": {
+    "@kancode/application": "workspace:*",
+    "@kancode/contracts": "workspace:*",
+    "@kancode/domain": "workspace:*",
+    "@kancode/events": "workspace:*",
+    "@kancode/infrastructure": "workspace:*",
+    "@kancode/shared": "workspace:*",
+    "next": "16.2.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
+}

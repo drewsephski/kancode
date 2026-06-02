@@ -1,0 +1,4 @@
+
+> @kancode/bridge@ test /Users/drewsepeczi/kan/apps/bridge
+> node --eval "process.exit(0)"
+

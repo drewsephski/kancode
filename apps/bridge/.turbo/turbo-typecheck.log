@@ -1,0 +1,4 @@
+
+> @kancode/bridge@ typecheck /Users/drewsepeczi/kan/apps/bridge
+> tsc -p tsconfig.json --noEmit
+

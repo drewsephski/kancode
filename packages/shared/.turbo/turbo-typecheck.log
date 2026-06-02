@@ -1,0 +1,4 @@
+
+> @kancode/shared@ typecheck /Users/drewsepeczi/kan/packages/shared
+> tsc -p tsconfig.json --noEmit
+

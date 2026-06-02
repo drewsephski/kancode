@@ -1,0 +1,4 @@
+
+> @kancode/orchestration@ typecheck /Users/drewsepeczi/kan/packages/orchestration
+> tsc -p tsconfig.json --noEmit
+

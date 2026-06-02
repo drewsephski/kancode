@@ -1,0 +1,4 @@
+
+> @kancode/events@ test /Users/drewsepeczi/kan/packages/events
+> node --eval "process.exit(0)"
+

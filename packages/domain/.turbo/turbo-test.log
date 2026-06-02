@@ -1,0 +1,4 @@
+
+> @kancode/domain@ test /Users/drewsepeczi/kan/packages/domain
+> node --eval "process.exit(0)"
+

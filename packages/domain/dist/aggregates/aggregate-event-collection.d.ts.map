@@ -1,0 +1,1 @@
+{"version":3,"file":"aggregate-event-collection.d.ts","sourceRoot":"","sources":["../../src/aggregates/aggregate-event-collection.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,2BAA2B,CAAC;AAE7D,qBAAa,wBAAwB;;IAGnC,GAAG,CAAC,KAAK,EAAE,WAAW,GAAG,IAAI;IAI7B,IAAI,IAAI,WAAW,EAAE;IAMrB,IAAI,IAAI,IAAI,MAAM,CAEjB;IAED,OAAO,IAAI,OAAO;CAGnB"}

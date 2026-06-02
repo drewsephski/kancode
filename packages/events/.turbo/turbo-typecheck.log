@@ -1,0 +1,4 @@
+
+> @kancode/events@ typecheck /Users/drewsepeczi/kan/packages/events
+> tsc -p tsconfig.json --noEmit
+

@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/contracts" },
+    { "path": "./packages/domain" },
+    { "path": "./packages/application" },
+    { "path": "./packages/orchestration" },
+    { "path": "./packages/database" },
+    { "path": "./packages/events" },
+    { "path": "./packages/infrastructure" },
+    { "path": "./packages/testing" },
+    { "path": "./apps/web" },
+    { "path": "./apps/worker" },
+    { "path": "./apps/bridge" }
+  ]
+}

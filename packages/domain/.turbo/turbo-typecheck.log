@@ -1,0 +1,4 @@
+
+> @kancode/domain@ typecheck /Users/drewsepeczi/kan/packages/domain
+> tsc -p tsconfig.json --noEmit
+

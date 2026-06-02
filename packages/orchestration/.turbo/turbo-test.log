@@ -1,0 +1,4 @@
+
+> @kancode/orchestration@ test /Users/drewsepeczi/kan/packages/orchestration
+> node --eval "process.exit(0)"
+

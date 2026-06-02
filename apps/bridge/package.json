@@ -1,0 +1,17 @@
+{
+  "name": "@kancode/bridge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "node --eval \"process.exit(0)\"",
+    "dev": "tsc -b -w"
+  },
+  "dependencies": {
+    "@kancode/contracts": "workspace:*",
+    "@kancode/infrastructure": "workspace:*",
+    "@kancode/shared": "workspace:*"
+  }
+}

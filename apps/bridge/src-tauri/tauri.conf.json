@@ -1,0 +1,19 @@
+{
+  "productName": "Kancode Bridge",
+  "version": "0.1.0",
+  "identifier": "com.kancode.bridge",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Kancode Bridge",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  }
+}

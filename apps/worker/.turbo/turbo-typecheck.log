@@ -1,0 +1,4 @@
+
+> @kancode/worker@ typecheck /Users/drewsepeczi/kan/apps/worker
+> tsc -p tsconfig.json --noEmit
+

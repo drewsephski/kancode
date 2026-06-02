@@ -1,0 +1,4 @@
+
+> @kancode/web@ lint /Users/drewsepeczi/kan/apps/web
+> eslint app components/index.ts features/index.ts server/index.ts lib/index.ts lib/utils.ts
+

@@ -1,0 +1,4 @@
+
+> @kancode/database@ test /Users/drewsepeczi/kan/packages/database
+> node --eval "process.exit(0)"
+

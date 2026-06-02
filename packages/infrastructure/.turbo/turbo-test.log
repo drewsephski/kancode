@@ -1,0 +1,4 @@
+
+> @kancode/infrastructure@ test /Users/drewsepeczi/kan/packages/infrastructure
+> node --eval "process.exit(0)"
+

@@ -1,0 +1,4 @@
+
+> @kancode/testing@ typecheck /Users/drewsepeczi/kan/packages/testing
+> tsc -p tsconfig.json --noEmit
+

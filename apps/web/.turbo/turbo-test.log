@@ -1,0 +1,4 @@
+
+> @kancode/web@ test /Users/drewsepeczi/kan/apps/web
+> node --eval "process.exit(0)"
+
