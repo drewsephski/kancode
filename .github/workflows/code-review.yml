@@ -32,3 +32,47 @@ jobs:
           model: opencode/big-pickle
           agent: code-review
           use_github_token: true
+          prompt: |
+            Review this pull request and create a real GitHub issue with actionable checkbox findings that can be autonomously fixed.
+
+            ## CRITICAL: You MUST create a real GitHub issue
+
+            Use `gh issue create` via bash. The GITHUB_TOKEN and GH_TOKEN env vars provide write access.
+
+            ```bash
+            gh label create "code-review" --description "Automated code review findings" --color "0E8A16" --force 2>/dev/null || true
+            cat > "${RUNNER_TEMP:-/tmp}/issue-body.md" << 'ISSUE_EOF'
+            ## Overall Rating: X/10
+            ...
+            ISSUE_EOF
+            gh issue create --title "Code Review: <branch-name> - <2-5 word summary>" --label "code-review" --body-file "${RUNNER_TEMP:-/tmp}/issue-body.md"
+            ```
+
+            **Fallback:** If `gh issue create` fails, retry 3 times. If all fail, post the full review as a PR comment.
+
+            After creating the issue, reply with ONLY: "Created review issue #N"
+
+            ## Issue body format
+
+            ```
+            ## Overall Rating: X/10 (9-10 flawless, 7-8 solid, 5-6 needs work, 3-4 major concerns, 1-2 critical)
+            ## What's Good
+            ## Findings
+            - [ ] **[File:path:line]** Short description (severity)
+              <details><summary>Details & fix</summary>**What:** ... **Fix:** code change</details>
+            ```
+
+            Severity: 🔴 blocker, 🟡 major, 🔵 minor, ⚪ nit
+
+            | Category | X/10 | Key concern |
+            |----------|------|-------------|
+            | Code Quality | | |
+            | Bugs & Correctness | | |
+            | Security | | |
+            | Performance | | |
+            | Maintainability | | |
+
+            ## Guidelines
+            - Every finding MUST be `- [ ]` checkbox with file:line and exact fix.
+            - Prioritize blockers first. Be constructive. Recognize good code too.
+            - Brief is fine for trivial PRs.
