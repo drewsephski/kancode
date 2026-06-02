@@ -27,6 +27,7 @@ jobs:
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         with:
           model: opencode/big-pickle
           use_github_token: true
@@ -40,8 +41,14 @@ jobs:
             Write the issue body to a temp file first (safe for multiline markdown), then create the issue:
 
             ```bash
+            # Ensure the label exists (idempotent)
+            gh label create "code-review" \
+              --description "Automated code review findings" \
+              --color "0E8A16" \
+              --force 2>/dev/null || true
+
             # Write the issue body to a temp file (safe for multiline markdown)
-            cat > /tmp/issue-body.md << 'ISSUE_EOF'
+            cat > "${RUNNER_TEMP:-/tmp}/issue-body.md" << 'ISSUE_EOF'
             ## Overall Rating: X/10
             ...
             ISSUE_EOF
@@ -50,10 +57,10 @@ jobs:
             gh issue create \
               --title "Code Review: <branch-name> - <2-5 word summary>" \
               --label "code-review" \
-              --body-file /tmp/issue-body.md
+              --body-file "${RUNNER_TEMP:-/tmp}/issue-body.md"
             ```
 
-            **Fallback:** If `gh issue create` fails, post the full review as a PR comment instead so findings are not lost. Retry up to 3 times with a 5-second delay between attempts.
+            **Fallback:** If `gh issue create` fails, check the error. If it's a label issue, create the label first. If it's a network/auth issue, retry up to 3 times with a 5-second delay. If all retries fail, post the full review as a PR comment so findings are not lost.
 
             After successfully creating the issue, reply with ONLY: "Created review issue #N" — do not repeat the full review in this comment.
 
@@ -115,4 +122,4 @@ jobs:
             - Be constructive - frame criticism as actionable suggestions.
             - Recognize good code too.
             - If the PR is trivial, keep it brief - don't inflate issues.
-            - Apply the `code-review` label. If it doesn't exist, add `--label "code-review"` and `gh` will create it.
+            - Apply the `code-review` label (already handled by the `gh label create` step above).
