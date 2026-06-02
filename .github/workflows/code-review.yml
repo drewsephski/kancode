@@ -5,14 +5,15 @@ on:
     types: [opened, synchronize, reopened]
     branches: [main, master]
 
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   review:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
-      issues: write
     steps:
       - uses: actions/checkout@v6
         with:
