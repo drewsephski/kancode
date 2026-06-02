@@ -2,8 +2,12 @@ name: Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 permissions:
   id-token: write
@@ -27,27 +31,33 @@ jobs:
           model: opencode/big-pickle
           use_github_token: true
           prompt: |
-            You are an expert code reviewer. Your job is to review this pull request, then create a REAL GitHub issue with actionable findings that can be autonomously fixed.
+            You are an expert code reviewer. Your job is to review this pull request, then create a REAL GitHub issue with actionable checkbox findings that can be autonomously fixed.
 
             ## CRITICAL: You MUST create a real GitHub issue
 
-            The GITHUB_TOKEN env var provides write access to this repo. Use `gh issue create` (bash tool) to create a proper issue. The repo is `${{ github.repository }}`.
+            The GITHUB_TOKEN env var provides write access to this repo. Use `gh issue create` via bash.
 
-            Run:
+            Write the issue body to a temp file first (safe for multiline markdown), then create the issue:
+
             ```bash
+            # Write the issue body to a temp file (safe for multiline markdown)
+            cat > /tmp/issue-body.md << 'ISSUE_EOF'
+            ## Overall Rating: X/10
+            ...
+            ISSUE_EOF
+
+            # Create the issue
             gh issue create \
-              --title "<title>" \
+              --title "Code Review: <branch-name> - <2-5 word summary>" \
               --label "code-review" \
-              --body "<issue-body>"
+              --body-file /tmp/issue-body.md
             ```
 
-            After creating the issue, reply with ONLY a short message like "Created review issue #N" — do not repeat the full review in this comment.
+            **Fallback:** If `gh issue create` fails, post the full review as a PR comment instead so findings are not lost. Retry up to 3 times with a 5-second delay between attempts.
 
-            ## Issue title format
+            After successfully creating the issue, reply with ONLY: "Created review issue #N" — do not repeat the full review in this comment.
 
-            `Code Review: <branch-name> — <2-5 word summary>`
-
-            ## Issue body structure
+            ## Issue body template
 
             ```
             ## Overall Rating: X/10
@@ -68,8 +78,6 @@ jobs:
 
             ## Findings
 
-            Each finding must be a task checkbox that can be autonomously fixed:
-
             - [ ] **[File: path/to/file.ts:42]** Short description (severity)
               <details>
               <summary>Details & fix</summary>
@@ -81,10 +89,10 @@ jobs:
               </details>
 
             Use these severity labels:
-            - `🔴 blocker` — Must fix before merge
-            - `🟡 major` — Should fix, important
-            - `🔵 minor` — Nice to have
-            - `⚪ nit` — Style preference
+            - 🔴 blocker - Must fix before merge
+            - 🟡 major - Should fix, important
+            - 🔵 minor - Nice to have
+            - ⚪ nit - Style preference
 
             ---
 
@@ -104,7 +112,7 @@ jobs:
             - Include file path and line number in each finding title.
             - Provide an exact code fix in each finding's details.
             - Prioritize: list blockers and majors first.
-            - Be constructive — frame criticism as actionable suggestions.
+            - Be constructive - frame criticism as actionable suggestions.
             - Recognize good code too.
-            - If the PR is trivial, keep it brief — don't inflate issues.
+            - If the PR is trivial, keep it brief - don't inflate issues.
             - Apply the `code-review` label. If it doesn't exist, add `--label "code-review"` and `gh` will create it.
