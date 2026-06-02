@@ -27,67 +27,84 @@ jobs:
           model: opencode/big-pickle
           use_github_token: true
           prompt: |
-            You are an expert code reviewer. Review this pull request thoroughly and create a GitHub issue with your findings.
+            You are an expert code reviewer. Your job is to review this pull request, then create a REAL GitHub issue with actionable findings that can be autonomously fixed.
 
-            Issue title format: "Code Review: <branch-name> — <2-5 word summary>"
+            ## CRITICAL: You MUST create a real GitHub issue
 
-            ## Overall Rating: **X/10**
+            The GITHUB_TOKEN env var provides write access to this repo. Use `gh issue create` (bash tool) to create a proper issue. The repo is `${{ github.repository }}`.
+
+            Run:
+            ```bash
+            gh issue create \
+              --title "<title>" \
+              --label "code-review" \
+              --body "<issue-body>"
+            ```
+
+            After creating the issue, reply with ONLY a short message like "Created review issue #N" — do not repeat the full review in this comment.
+
+            ## Issue title format
+
+            `Code Review: <branch-name> — <2-5 word summary>`
+
+            ## Issue body structure
+
+            ```
+            ## Overall Rating: X/10
 
             Use this scale:
-            - 9-10: Production-ready, near-flawless. Minor nits only.
-            - 7-8: Solid. A few minor issues but nothing blocking.
-            - 5-6: Needs work. Several moderate issues to address.
-            - 3-4: Major concerns. Should not merge without significant changes.
-            - 1-2: Critical problems. Fundamentally broken or unsafe.
+            - 9-10: Production-ready, near-flawless.
+            - 7-8: Solid. A few minor issues.
+            - 5-6: Needs work. Several moderate issues.
+            - 3-4: Major concerns.
+            - 1-2: Critical problems.
 
-            ## Review Sections
+            ---
 
-            ### What's Good
-            - Call out well-structured code, good naming, proper patterns, helpful comments, or thoughtful design decisions.
+            ## What's Good
+            Call out well-structured code, good naming, proper patterns, or thoughtful design.
 
-            ### Code Quality (X/10)
-            - Readability and naming: Are variables, functions, and types clearly named? Are there magic numbers or unclear logic?
-            - Structure and modularity: Is the code DRY? Are concerns separated? Are functions a reasonable size?
-            - Consistency: Does it follow the existing project conventions and language idioms?
-            - Error handling: Are errors properly caught, logged, or surfaced? Are edge cases considered?
+            ---
 
-            ### Bugs & Correctness (X/10)
-            - Logic errors: Off-by-one, wrong operator, incorrect assumption.
-            - State issues: Race conditions, stale closures, mutation where immutability expected.
-            - Type safety: Any `any` casts, unsafe assertions, or missing null checks.
-            - API misuse: Wrong arguments, missing params, incorrect method calls.
-            - Edge cases: Empty states, boundary values, unexpected input.
+            ## Findings
 
-            ### Security (X/10)
-            - Injection: SQL, NoSQL, shell, or command injection vectors.
-            - Secrets: Hardcoded keys, tokens, passwords, or internal URLs.
-            - Auth & authorization: Missing checks, privilege escalation paths.
-            - Data validation: Unsanitized user input flowing to sensitive sinks.
-            - Dependencies: Known vulnerable packages introduced.
+            Each finding must be a task checkbox that can be autonomously fixed:
 
-            ### Performance (X/10)
-            - Algorithmic: Unnecessary loops, O(n²) where O(n) would do, redundant work.
-            - I/O: N+1 queries, missing caching, chatty network calls.
-            - Memory: Leaks, large object retention, unnecessary allocations.
-            - Bundle: Large imports, unused code, heavy dependencies for trivial tasks.
+            - [ ] **[File: path/to/file.ts:42]** Short description (severity)
+              <details>
+              <summary>Details & fix</summary>
 
-            ### Maintainability (X/10)
-            - Testability: Are there tests? Are they meaningful? Is the code easy to test?
-            - Documentation: Useful comments (not obvious ones), clear interfaces, API docs where needed.
-            - Change impact: Does this touch many unrelated files? Is it easy to revert?
-            - Technical debt: Workarounds, TODO/FIXME/HACK comments, complexity that should be refactored.
+              **What:** Explain the issue clearly.
 
-            ### Specific Suggestions
-            For each issue, include:
-            - File and line reference
-            - What's wrong
-            - How to fix it (with code snippet if applicable)
-            - Severity: `🔴 blocker` | `🟡 major` | `🔵 minor` | `⚪ nit`
+              **Fix:** Show the exact code change needed.
+
+              </details>
+
+            Use these severity labels:
+            - `🔴 blocker` — Must fix before merge
+            - `🟡 major` — Should fix, important
+            - `🔵 minor` — Nice to have
+            - `⚪ nit` — Style preference
+
+            ---
+
+            ## Scoring (optional per-PR)
+
+            | Category | Score | Key concern |
+            |----------|-------|-------------|
+            | Code Quality | X/10 | ... |
+            | Bugs & Correctness | X/10 | ... |
+            | Security | X/10 | ... |
+            | Performance | X/10 | ... |
+            | Maintainability | X/10 | ... |
+            ```
 
             ## Guidelines
-            - Be specific and cite exact file paths and line numbers.
-            - Prioritize: flag blockers and majors clearly at the top.
-            - Be constructive — frame criticism as actionable suggestions, not complaints.
-            - Recognize good code too — positive reinforcement matters.
-            - Distinguish opinion from objective issues: "This works but I'd prefer..." vs "This will break when..."
-            - If the PR is small or trivial, it's fine to keep the review brief — don't inflate issues.
+            - Every finding MUST be a checkbox `- [ ]` so it can be tracked and fixed autonomously.
+            - Include file path and line number in each finding title.
+            - Provide an exact code fix in each finding's details.
+            - Prioritize: list blockers and majors first.
+            - Be constructive — frame criticism as actionable suggestions.
+            - Recognize good code too.
+            - If the PR is trivial, keep it brief — don't inflate issues.
+            - Apply the `code-review` label. If it doesn't exist, add `--label "code-review"` and `gh` will create it.
