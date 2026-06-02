@@ -1,7 +1,8 @@
 name: Code Review
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
     branches: [main, master]
 
 jobs:
@@ -24,27 +25,67 @@ jobs:
           model: opencode/big-pickle
           use_github_token: true
           prompt: |
-            Review the code changes in this push commit.
+            You are an expert code reviewer. Review this pull request thoroughly and create a GitHub issue with your findings.
 
-            Create a GitHub issue titled "Code Review: <describe what changed>" with the following sections:
+            Issue title format: "Code Review: <branch-name> — <2-5 word summary>"
 
             ## Overall Rating: **X/10**
 
-            ### Code Quality
-            - Assess readability, maintainability, structure, and adherence to convention.
-            - Note anything well-structured or following best practices.
+            Use this scale:
+            - 9-10: Production-ready, near-flawless. Minor nits only.
+            - 7-8: Solid. A few minor issues but nothing blocking.
+            - 5-6: Needs work. Several moderate issues to address.
+            - 3-4: Major concerns. Should not merge without significant changes.
+            - 1-2: Critical problems. Fundamentally broken or unsafe.
 
-            ### Bugs & Risks
-            - Identify any potential bugs, edge cases, or runtime errors.
-            - Flag unsafe patterns or logic issues.
+            ## Review Sections
 
-            ### Security
-            - Check for exposed secrets, injection risks, or other vulnerabilities.
+            ### What's Good
+            - Call out well-structured code, good naming, proper patterns, helpful comments, or thoughtful design decisions.
 
-            ### Performance
-            - Spot any obvious inefficiencies, N+1 queries, or unnecessary work.
+            ### Code Quality (X/10)
+            - Readability and naming: Are variables, functions, and types clearly named? Are there magic numbers or unclear logic?
+            - Structure and modularity: Is the code DRY? Are concerns separated? Are functions a reasonable size?
+            - Consistency: Does it follow the existing project conventions and language idioms?
+            - Error handling: Are errors properly caught, logged, or surfaced? Are edge cases considered?
 
-            ### Suggestions
-            - Concrete, actionable improvements the author could make.
+            ### Bugs & Correctness (X/10)
+            - Logic errors: Off-by-one, wrong operator, incorrect assumption.
+            - State issues: Race conditions, stale closures, mutation where immutability expected.
+            - Type safety: Any `any` casts, unsafe assertions, or missing null checks.
+            - API misuse: Wrong arguments, missing params, incorrect method calls.
+            - Edge cases: Empty states, boundary values, unexpected input.
 
-            Be fair and constructive. Include specific file/line references where relevant.
+            ### Security (X/10)
+            - Injection: SQL, NoSQL, shell, or command injection vectors.
+            - Secrets: Hardcoded keys, tokens, passwords, or internal URLs.
+            - Auth & authorization: Missing checks, privilege escalation paths.
+            - Data validation: Unsanitized user input flowing to sensitive sinks.
+            - Dependencies: Known vulnerable packages introduced.
+
+            ### Performance (X/10)
+            - Algorithmic: Unnecessary loops, O(n²) where O(n) would do, redundant work.
+            - I/O: N+1 queries, missing caching, chatty network calls.
+            - Memory: Leaks, large object retention, unnecessary allocations.
+            - Bundle: Large imports, unused code, heavy dependencies for trivial tasks.
+
+            ### Maintainability (X/10)
+            - Testability: Are there tests? Are they meaningful? Is the code easy to test?
+            - Documentation: Useful comments (not obvious ones), clear interfaces, API docs where needed.
+            - Change impact: Does this touch many unrelated files? Is it easy to revert?
+            - Technical debt: Workarounds, TODO/FIXME/HACK comments, complexity that should be refactored.
+
+            ### Specific Suggestions
+            For each issue, include:
+            - File and line reference
+            - What's wrong
+            - How to fix it (with code snippet if applicable)
+            - Severity: `🔴 blocker` | `🟡 major` | `🔵 minor` | `⚪ nit`
+
+            ## Guidelines
+            - Be specific and cite exact file paths and line numbers.
+            - Prioritize: flag blockers and majors clearly at the top.
+            - Be constructive — frame criticism as actionable suggestions, not complaints.
+            - Recognize good code too — positive reinforcement matters.
+            - Distinguish opinion from objective issues: "This works but I'd prefer..." vs "This will break when..."
+            - If the PR is small or trivial, it's fine to keep the review brief — don't inflate issues.
